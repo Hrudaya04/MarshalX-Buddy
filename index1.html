@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MarshalX Buddy — Your Mental Wellness Companion</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --purple-50:#EEEDFE;--purple-100:#CECBF6;--purple-200:#AFA9EC;
+  --purple-400:#7F77DD;--purple-600:#534AB7;--purple-800:#3C3489;
+  --pink-50:#FBEAF0;--pink-100:#F4C0D1;--pink-200:#ED93B1;
+  --pink-400:#D4537E;--pink-600:#993556;
+  --teal-400:#1D9E75;
+  --radius:16px;--radius-sm:10px;
+}
+[data-theme="light"]{
+  --bg:#fdf8fb;--surface:#ffffff;--surface-2:#f7f2f6;
+  --border:rgba(212,83,126,0.15);
+  --text:#1a1025;--text-2:#6b5370;--text-3:#b89ab0;
+  --header-bg:rgba(255,255,255,0.88);
+  --blob1:var(--purple-50);--blob2:var(--pink-50);
+  --input-bg:#f7f2f6;--affirm-color:var(--purple-600);
+}
+[data-theme="dark"]{
+  --bg:#120d1a;--surface:#1e1528;--surface-2:#271a33;
+  --border:rgba(175,169,236,0.15);
+  --text:#ede8f5;--text-2:#b89ab0;--text-3:#6b5370;
+  --header-bg:rgba(18,13,26,0.90);
+  --blob1:#1e1528;--blob2:#1a1226;
+  --input-bg:#271a33;--affirm-color:var(--purple-200);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;transition:background .3s,color .3s}
+body::before{content:'';position:fixed;top:-120px;right:-120px;width:420px;height:420px;border-radius:50%;background:var(--blob1);z-index:0;pointer-events:none;transition:background .3s}
+body::after{content:'';position:fixed;bottom:-80px;left:-80px;width:300px;height:300px;border-radius:50%;background:var(--blob2);z-index:0;pointer-events:none;transition:background .3s}
+
+.page{display:none;flex-direction:column;flex:1}
+.page.active{display:flex}
+
+/* LOGIN */
+#loginPage{align-items:center;justify-content:center;min-height:100vh;padding:24px;position:relative;z-index:1}
+.login-card{background:var(--surface);border:0.5px solid var(--border);border-radius:24px;padding:40px 36px;width:100%;max-width:400px;box-shadow:0 24px 60px rgba(127,119,221,0.10);animation:floatIn .5s cubic-bezier(.22,.68,0,1.2)}
+@keyframes floatIn{from{opacity:0;transform:translateY(24px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+.login-logo{display:flex;align-items:center;gap:10px;margin-bottom:24px}
+.login-logo-mark{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--purple-400),var(--pink-400));display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:22px;color:white}
+.login-logo-name{font-family:'DM Serif Display',serif;font-size:24px;color:var(--text);letter-spacing:-.3px}
+.login-logo-name span{color:var(--purple-400);font-style:italic}
+.login-mode-label{font-family:'DM Serif Display',serif;font-size:22px;color:var(--text);margin-bottom:6px}
+.login-tagline{font-size:13px;color:var(--text-3);margin-bottom:26px;line-height:1.5}
+.login-tagline strong{color:var(--text-2);font-weight:500}
+.field{margin-bottom:14px}
+.field label{font-size:12px;font-weight:600;color:var(--text-2);letter-spacing:.4px;display:block;margin-bottom:6px}
+.field input{width:100%;padding:10px 14px;font-size:14px;border-radius:12px;border:0.5px solid var(--border);background:var(--input-bg);color:var(--text);outline:none;font-family:'Plus Jakarta Sans',sans-serif;transition:border-color .15s,background .3s}
+.field input:focus{border-color:var(--purple-400)}
+.login-btn{width:100%;padding:12px;border-radius:12px;border:none;margin-top:6px;background:linear-gradient(135deg,var(--purple-400),var(--pink-400));color:white;font-size:15px;font-weight:600;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:opacity .15s}
+.login-btn:hover{opacity:.88}
+.login-error{font-size:12px;color:var(--pink-400);margin-top:10px;text-align:center;min-height:18px}
+.login-divider{display:flex;align-items:center;gap:10px;margin:16px 0;font-size:12px;color:var(--text-3)}
+.login-divider::before,.login-divider::after{content:'';flex:1;height:.5px;background:var(--border)}
+.guest-btn{width:100%;padding:10px;border-radius:12px;border:0.5px solid var(--border);background:var(--surface-2);color:var(--text-2);font-size:14px;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all .15s}
+.guest-btn:hover{border-color:var(--purple-200);color:var(--text)}
+.login-switch{text-align:center;margin-top:18px;font-size:13px;color:var(--text-3)}
+.login-switch a{color:var(--purple-400);cursor:pointer}
+.login-switch a:hover{text-decoration:underline}
+.theme-float{position:fixed;top:16px;right:16px;z-index:100}
+
+/* HEADER */
+header{position:relative;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:14px 24px;background:var(--header-bg);backdrop-filter:blur(14px);border-bottom:0.5px solid var(--border);transition:background .3s}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--purple-400),var(--pink-400));display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:17px;color:white}
+.logo-name{font-family:'DM Serif Display',serif;font-size:19px;color:var(--text);letter-spacing:-.3px}
+.logo-name span{color:var(--purple-400);font-style:italic}
+.logo-sub{font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;font-style:normal;color:var(--text-3);font-weight:400}
+.header-right{display:flex;align-items:center;gap:10px}
+.header-user{font-size:13px;color:var(--text-2);font-weight:500}
+.theme-toggle{width:34px;height:34px;border-radius:50%;border:0.5px solid var(--border);background:var(--surface-2);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.theme-toggle:hover{border-color:var(--purple-400)}
+.logout-btn{font-size:12px;padding:5px 12px;border-radius:20px;border:0.5px solid var(--border);background:var(--surface-2);color:var(--text-2);cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all .15s}
+.logout-btn:hover{border-color:var(--pink-400);color:var(--pink-400)}
+
+/* MAIN */
+main{position:relative;z-index:1;flex:1;display:flex;gap:16px;padding:20px;max-width:1100px;margin:0 auto;width:100%}
+
+/* SIDEBAR */
+.sidebar{width:240px;flex-shrink:0;display:flex;flex-direction:column;gap:14px}
+.panel{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:16px;transition:background .3s,border-color .3s}
+.panel-title{font-size:11px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--text-3);margin-bottom:14px}
+.mood-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.mood-btn{aspect-ratio:1;border-radius:10px;border:0.5px solid var(--border);background:var(--input-bg);cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.mood-btn:hover{transform:scale(1.1);border-color:var(--purple-200)}
+.mood-btn.active{background:var(--purple-50);border-color:var(--purple-400);box-shadow:0 0 0 2px var(--purple-100)}
+[data-theme="dark"] .mood-btn.active{background:#2d2450}
+.mood-label{font-size:11px;color:var(--text-3);text-align:center;margin-top:8px;min-height:16px}
+.affirmation-text{font-family:'DM Serif Display',serif;font-size:15px;line-height:1.5;color:var(--affirm-color);font-style:italic;border-left:2px solid var(--purple-200);padding-left:10px;transition:opacity .3s}
+.affirmation-refresh{margin-top:10px;font-size:12px;color:var(--text-3);cursor:pointer;display:flex;align-items:center;gap:4px;transition:color .15s}
+.affirmation-refresh:hover{color:var(--purple-400)}
+.journal-prompt{font-size:13px;color:var(--text-2);line-height:1.5;margin-bottom:10px}
+.journal-area{width:100%;min-height:80px;resize:vertical;padding:8px 10px;font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;color:var(--text);background:var(--input-bg);border:0.5px solid var(--border);border-radius:var(--radius-sm);outline:none;line-height:1.5;transition:border-color .15s,background .3s}
+.journal-area:focus{border-color:var(--purple-400)}
+.journal-save{margin-top:8px;font-size:12px;padding:6px 14px;border-radius:20px;border:0.5px solid var(--purple-200);background:var(--purple-50);color:var(--purple-600);cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all .15s}
+[data-theme="dark"] .journal-save{background:#2d2450;color:var(--purple-200)}
+.journal-save:hover{background:var(--purple-100)}
+.breath-ring-wrap{display:flex;flex-direction:column;align-items:center;gap:10px}
+.breath-ring{width:80px;height:80px;border-radius:50%;border:2px solid var(--purple-200);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--affirm-color);transition:transform .1s;position:relative}
+.breath-ring::before{content:'';position:absolute;inset:-6px;border-radius:50%;border:1.5px solid var(--pink-100)}
+[data-theme="dark"] .breath-ring::before{border-color:#3d2a4a}
+.breath-label{font-size:13px;color:var(--text-2);text-align:center}
+.breath-btn{font-size:12px;padding:5px 12px;border-radius:20px;border:0.5px solid var(--border);background:var(--input-bg);color:var(--text-2);cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all .15s}
+.breath-btn:hover{background:var(--purple-50);border-color:var(--purple-200)}
+[data-theme="dark"] .breath-btn:hover{background:#2d2450}
+.breath-btn.active{background:var(--purple-400);color:white;border-color:var(--purple-400)}
+
+/* CHAT */
+.chat-panel{flex:1;display:flex;flex-direction:column;background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden;min-width:0;transition:background .3s}
+.chat-header{padding:14px 18px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;gap:12px}
+.chat-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--purple-100),var(--pink-100));display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+[data-theme="dark"] .chat-avatar{background:linear-gradient(135deg,#2d2450,#3d1f35)}
+.chat-name{font-weight:600;font-size:15px}
+.chat-sub{font-size:12px;color:var(--text-3)}
+.online-dot{width:8px;height:8px;border-radius:50%;background:var(--teal-400);margin-left:auto}
+.messages{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:14px;scroll-behavior:smooth}
+.messages::-webkit-scrollbar{width:4px}
+.messages::-webkit-scrollbar-thumb{background:var(--purple-100);border-radius:4px}
+[data-theme="dark"] .messages::-webkit-scrollbar-thumb{background:#3d2a4a}
+.msg{display:flex;gap:10px;max-width:80%;animation:fadeUp .25s ease}
+.msg.user{align-self:flex-end;flex-direction:row-reverse}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.msg-av{width:30px;height:30px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,var(--purple-100),var(--pink-100));display:flex;align-items:center;justify-content:center;font-size:14px;margin-top:2px}
+[data-theme="dark"] .msg-av{background:linear-gradient(135deg,#2d2450,#3d1f35)}
+.bubble{padding:11px 15px;font-size:14px;line-height:1.6;border-radius:18px}
+.msg.buddy .bubble{background:var(--surface-2);color:var(--text);border-radius:4px 18px 18px 18px}
+.msg.user .bubble{background:linear-gradient(135deg,var(--purple-400),var(--pink-400));color:white;border-radius:18px 4px 18px 18px}
+.typing-bubble{background:var(--surface-2);padding:14px 18px;border-radius:4px 18px 18px 18px;display:flex;gap:5px;align-items:center}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--purple-200);animation:bounce 1.2s infinite}
+.dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}
+@keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+.quick-btns{display:flex;gap:8px;padding:0 20px 12px;flex-wrap:wrap}
+.qbtn{font-size:12px;padding:6px 13px;border-radius:20px;border:0.5px solid var(--purple-200);background:var(--purple-50);color:var(--purple-600);cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all .15s;white-space:nowrap}
+[data-theme="dark"] .qbtn{background:#2d2450;color:var(--purple-200);border-color:#4a3d7a}
+.qbtn:hover{background:var(--purple-100)}
+[data-theme="dark"] .qbtn:hover{background:#3d2f60}
+.chat-input-row{display:flex;gap:10px;padding:14px 18px;border-top:0.5px solid var(--border);align-items:flex-end}
+.chat-input{flex:1;padding:10px 16px;font-size:14px;border-radius:22px;border:0.5px solid var(--border);background:var(--input-bg);color:var(--text);outline:none;resize:none;height:42px;max-height:120px;font-family:'Plus Jakarta Sans',sans-serif;line-height:1.5;transition:border-color .15s,background .3s}
+.chat-input:focus{border-color:var(--purple-400)}
+.send-btn{width:42px;height:42px;border-radius:50%;border:none;background:linear-gradient(135deg,var(--purple-400),var(--pink-400));color:white;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:17px;transition:opacity .15s}
+.send-btn:hover{opacity:.85}
+.send-btn:disabled{opacity:.4;cursor:default}
+.crisis-bar{font-size:11px;color:var(--text-3);text-align:center;padding:7px 16px;border-top:0.5px solid var(--border)}
+.crisis-bar a{color:var(--pink-400);text-decoration:none}
+.crisis-bar a:hover{text-decoration:underline}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--purple-800);color:white;font-size:13px;padding:9px 18px;border-radius:20px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:999}
+.toast.show{opacity:1}
+@media(max-width:700px){main{flex-direction:column;padding:12px}.sidebar{width:100%}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN PAGE -->
+<div id="loginPage" class="page active">
+  <button class="theme-toggle theme-float" onclick="toggleTheme()" id="loginThemeBtn" aria-label="Toggle dark mode">🌙</button>
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-logo-mark">M</div>
+      <div class="login-logo-name">Marshal<span>X</span></div>
+    </div>
+    <div class="login-mode-label" id="loginModeLabel">Welcome back</div>
+    <div class="login-tagline">Your <strong>safe space</strong> to breathe, reflect, and feel heard.</div>
+    <div class="field"><label>Email</label><input type="email" id="emailInput" placeholder="you@example.com" autocomplete="email"></div>
+    <div class="field"><label>Password</label><input type="password" id="passInput" placeholder="••••••••" autocomplete="current-password"></div>
+    <div class="field" id="confirmField" style="display:none"><label>Confirm Password</label><input type="password" id="confirmInput" placeholder="••••••••"></div>
+    <button class="login-btn" id="loginBtn" onclick="handleAuth()">Sign in</button>
+    <div class="login-error" id="loginError"></div>
+    <div class="login-divider">or</div>
+    <button class="guest-btn" onclick="loginAsGuest()">Continue as Guest 🌸</button>
+    <div class="login-switch" id="loginSwitch">Don't have an account? <a onclick="toggleMode()">Sign up</a></div>
+  </div>
+</div>
+
+<!-- APP PAGE -->
+<div id="appPage" class="page">
+  <header>
+    <div class="logo">
+      <div class="logo-mark">M</div>
+      <div class="logo-name">Marshal<span>X</span> <span class="logo-sub">Buddy</span></div>
+    </div>
+    <div class="header-right">
+      <span class="header-user" id="headerUser"></span>
+      <button class="theme-toggle" onclick="toggleTheme()" id="appThemeBtn" aria-label="Toggle dark mode">🌙</button>
+      <button class="logout-btn" onclick="logout()">Sign out</button>
+    </div>
+  </header>
+  <main>
+    <aside class="sidebar">
+      <div class="panel">
+        <div class="panel-title">How are you feeling?</div>
+        <div class="mood-grid">
+          <button class="mood-btn" data-mood="Awful" onclick="selectMood(this)" title="Awful">😞</button>
+          <button class="mood-btn" data-mood="Bad" onclick="selectMood(this)" title="Bad">😔</button>
+          <button class="mood-btn" data-mood="Okay" onclick="selectMood(this)" title="Okay">😐</button>
+          <button class="mood-btn" data-mood="Good" onclick="selectMood(this)" title="Good">🙂</button>
+          <button class="mood-btn" data-mood="Great" onclick="selectMood(this)" title="Great">😊</button>
+        </div>
+        <div class="mood-label" id="moodLabel">Tap to log your mood</div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Breathing exercise</div>
+        <div class="breath-ring-wrap">
+          <div class="breath-ring" id="breathRing"><span id="breathText">4-7-8</span></div>
+          <div class="breath-label" id="breathLabel">Box breathing for calm</div>
+          <div><button class="breath-btn" id="breathStartBtn" onclick="toggleBreath()">Start</button></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Daily affirmation</div>
+        <div class="affirmation-text" id="affirmText"></div>
+        <div class="affirmation-refresh" onclick="refreshAffirmation()">↻ New affirmation</div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Journal prompt</div>
+        <div class="journal-prompt" id="journalPrompt"></div>
+        <textarea class="journal-area" id="journalArea" placeholder="Write freely here..."></textarea>
+        <button class="journal-save" onclick="saveJournal()">Save entry ✓</button>
+      </div>
+    </aside>
+    <section class="chat-panel" aria-label="Chat with Buddy">
+      <div class="chat-header">
+        <div class="chat-avatar">🌸</div>
+        <div><div class="chat-name">Buddy</div><div class="chat-sub">Your MarshalX wellness companion</div></div>
+        <div class="online-dot" title="Online"></div>
+      </div>
+      <div class="messages" id="messages" role="log" aria-live="polite"></div>
+      <div class="quick-btns" id="quickBtns">
+        <button class="qbtn" onclick="quickSend('I\'m feeling really anxious right now')">Feeling anxious</button>
+        <button class="qbtn" onclick="quickSend('I\'m stressed and overwhelmed')">Overwhelmed</button>
+        <button class="qbtn" onclick="quickSend('I just need someone to talk to')">Need to talk</button>
+        <button class="qbtn" onclick="quickSend('I\'m having trouble sleeping')">Can't sleep</button>
+        <button class="qbtn" onclick="quickSend('I\'m feeling lonely')">Feeling lonely</button>
+      </div>
+      <div class="chat-input-row">
+        <textarea class="chat-input" id="msgInput" placeholder="Share what's on your mind..." aria-label="Your message" rows="1"></textarea>
+        <button class="send-btn" id="sendBtn" onclick="sendMessage()" aria-label="Send">➤</button>
+      </div>
+      <div class="crisis-bar">
+        In crisis? <a href="tel:9152987821">iCall India: 9152987821</a> &nbsp;·&nbsp;
+        <a href="tel:18602662345">Vandrevala: 1860-2662-345</a> &nbsp;·&nbsp;
+        <a href="https://iCall.ediss.in" target="_blank">iCall.ediss.in</a>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* THEME */
+let darkMode = localStorage.getItem('mx-theme') === 'dark';
+applyTheme();
+function applyTheme() {
+  document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+  const icon = darkMode ? '☀️' : '🌙';
+  ['loginThemeBtn','appThemeBtn'].forEach(id => { const el=document.getElementById(id); if(el) el.textContent=icon; });
+  localStorage.setItem('mx-theme', darkMode ? 'dark' : 'light');
+}
+function toggleTheme() { darkMode=!darkMode; applyTheme(); }
+
+/* AUTH */
+let isSignup = false, currentUser = null;
+
+function toggleMode() {
+  isSignup = !isSignup;
+  document.getElementById('loginModeLabel').textContent = isSignup ? 'Create account' : 'Welcome back';
+  document.getElementById('loginBtn').textContent = isSignup ? 'Create account' : 'Sign in';
+  document.getElementById('confirmField').style.display = isSignup ? 'block' : 'none';
+  document.getElementById('loginSwitch').innerHTML = isSignup
+    ? 'Already have an account? <a onclick="toggleMode()">Sign in</a>'
+    : "Don't have an account? <a onclick=\"toggleMode()\">Sign up</a>";
+  document.getElementById('loginError').textContent = '';
+}
+
+function handleAuth() {
+  const email = document.getElementById('emailInput').value.trim();
+  const pass = document.getElementById('passInput').value;
+  const err = document.getElementById('loginError');
+  err.style.color = 'var(--pink-400)';
+  if (!email||!pass) { err.textContent='Please fill in all fields.'; return; }
+  if (isSignup) {
+    const confirm = document.getElementById('confirmInput').value;
+    if (pass !== confirm) { err.textContent='Passwords do not match.'; return; }
+    if (pass.length < 6) { err.textContent='Password must be at least 6 characters.'; return; }
+    const users = JSON.parse(localStorage.getItem('mx-users')||'{}');
+    if (users[email]) { err.textContent='Account already exists. Sign in instead.'; return; }
+    users[email] = pass; localStorage.setItem('mx-users', JSON.stringify(users));
+    err.style.color='var(--teal-400)'; err.textContent='Account created! Signing you in…';
+    setTimeout(() => enterApp(email), 700);
+  } else {
+    const users = JSON.parse(localStorage.getItem('mx-users')||'{}');
+    if (!users[email]||users[email]!==pass) { err.textContent='Incorrect email or password.'; return; }
+    enterApp(email);
+  }
+}
+
+function loginAsGuest() { enterApp('Guest'); }
+
+function enterApp(user) {
+  currentUser = user;
+  document.getElementById('headerUser').textContent = user==='Guest' ? '👤 Guest' : '👤 '+user.split('@')[0];
+  document.getElementById('loginPage').classList.remove('active');
+  document.getElementById('appPage').classList.add('active');
+  initApp();
+}
+
+function logout() {
+  currentUser=null; history=[];
+  document.getElementById('messages').innerHTML='';
+  document.getElementById('appPage').classList.remove('active');
+  document.getElementById('loginPage').classList.add('active');
+  document.getElementById('loginError').textContent='';
+  document.getElementById('emailInput').value='';
+  document.getElementById('passInput').value='';
+  document.getElementById('confirmInput').value='';
+  if (isSignup) toggleMode();
+}
+
+document.getElementById('emailInput').addEventListener('keydown',e=>{ if(e.key==='Enter') document.getElementById('passInput').focus(); });
+document.getElementById('passInput').addEventListener('keydown',e=>{ if(e.key==='Enter') handleAuth(); });
+document.getElementById('confirmInput').addEventListener('keydown',e=>{ if(e.key==='Enter') handleAuth(); });
+
+/* APP */
+const SYSTEM=`You are Buddy, a warm and compassionate mental health support companion built by MarshalX. Your role is to:
+- Listen with deep empathy and without any judgment
+- Validate the person's feelings and emotions sincerely
+- Ask gentle, open-ended questions to help them explore their feelings
+- Offer calm, grounding suggestions when appropriate (breathing, grounding techniques, self-care)
+- Keep responses concise — 2-4 sentences, conversational, warm, and human
+- Never diagnose, prescribe, or replace professional mental health care
+- If someone expresses serious distress or suicidal thoughts, compassionately encourage them to reach out to a crisis line or mental health professional
+- Use a gentle, caring, non-clinical tone — like a kind and wise friend who truly listens
+- Do not use bullet points or lists — keep it flowing, conversational prose only
+- Occasionally reflect back what you hear to show you understand`;
+
+let history=[],busy=false,breathInterval=null,breathPhase=0,breathRunning=false;
+const breathPhases=[
+  {label:'Breathe in...',duration:4000,scale:1.35},
+  {label:'Hold...',duration:7000,scale:1.35},
+  {label:'Breathe out...',duration:8000,scale:1.0}
+];
+const affirmations=[
+  "You are enough, exactly as you are right now.",
+  "Your feelings are valid and deserving of care.",
+  "Every small step forward is worth celebrating.",
+  "You have survived difficult days before — you are stronger than you know.",
+  "It's okay to rest. Rest is not giving up.",
+  "You deserve kindness — especially from yourself.",
+  "This moment will pass. You are not alone.",
+  "Your presence in this world matters deeply.",
+  "Healing is not linear, and that is perfectly okay.",
+  "You are worthy of love, support, and peace."
+];
+const journalPrompts=[
+  "What is one thing you're grateful for today, however small?",
+  "What emotion is most present for you right now? Where do you feel it in your body?",
+  "What would you tell a close friend going through what you're facing?",
+  "Describe one moment this week when you felt at ease, even briefly.",
+  "What do you need most from yourself right now?",
+  "What is something you're proud of yourself for lately?",
+  "What boundaries would help you feel safer or calmer today?"
+];
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+function refreshAffirmation(){const el=document.getElementById('affirmText');el.style.opacity='0';setTimeout(()=>{el.textContent=affirmations[Math.floor(Math.random()*affirmations.length)];el.style.transition='opacity .4s';el.style.opacity='1'},200)}
+function refreshJournalPrompt(){document.getElementById('journalPrompt').textContent=journalPrompts[Math.floor(Math.random()*journalPrompts.length)]}
+function saveJournal(){const text=document.getElementById('journalArea').value.trim();if(!text){showToast('Write something first 🌸');return}const key='mx-journal-'+(currentUser||'guest');const entries=JSON.parse(localStorage.getItem(key)||'[]');entries.push({date:new Date().toISOString(),text});localStorage.setItem(key,JSON.stringify(entries));document.getElementById('journalArea').value='';refreshJournalPrompt();showToast('Entry saved 💜')}
+function selectMood(btn){document.querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.getElementById('moodLabel').textContent='Feeling '+btn.dataset.mood.toLowerCase()+' — noted';const key='mx-moods-'+(currentUser||'guest');const moods=JSON.parse(localStorage.getItem(key)||'[]');moods.push({date:new Date().toISOString(),mood:btn.dataset.mood});localStorage.setItem(key,JSON.stringify(moods))}
+function toggleBreath(){breathRunning?stopBreath():startBreath()}
+function startBreath(){breathRunning=true;document.getElementById('breathStartBtn').textContent='Stop';document.getElementById('breathStartBtn').classList.add('active');runBreathPhase()}
+function stopBreath(){breathRunning=false;clearTimeout(breathInterval);document.getElementById('breathStartBtn').textContent='Start';document.getElementById('breathStartBtn').classList.remove('active');const ring=document.getElementById('breathRing');ring.style.transform='';ring.style.transition='';document.getElementById('breathText').textContent='4-7-8';document.getElementById('breathLabel').textContent='Box breathing for calm'}
+function runBreathPhase(){if(!breathRunning)return;const phase=breathPhases[breathPhase%3];const ring=document.getElementById('breathRing');ring.style.transition=`transform ${phase.duration}ms ease-in-out`;ring.style.transform=`scale(${phase.scale})`;document.getElementById('breathText').textContent=phase.duration/1000+'s';document.getElementById('breathLabel').textContent=phase.label;breathInterval=setTimeout(()=>{breathPhase++;runBreathPhase()},phase.duration)}
+function scrollBottom(){const m=document.getElementById('messages');m.scrollTop=m.scrollHeight}
+function addMsg(role,text){const msgs=document.getElementById('messages');const wrap=document.createElement('div');wrap.className='msg '+(role==='user'?'user':'buddy');if(role!=='user'){const av=document.createElement('div');av.className='msg-av';av.textContent='🌸';wrap.appendChild(av)}const b=document.createElement('div');b.className='bubble';b.textContent=text;wrap.appendChild(b);msgs.appendChild(wrap);scrollBottom()}
+function showTyping(){const msgs=document.getElementById('messages');const wrap=document.createElement('div');wrap.className='msg buddy';wrap.id='typing';const av=document.createElement('div');av.className='msg-av';av.textContent='🌸';wrap.appendChild(av);const b=document.createElement('div');b.className='typing-bubble';b.innerHTML='<div class="dot"></div><div class="dot"></div><div class="dot"></div>';wrap.appendChild(b);msgs.appendChild(wrap);scrollBottom()}
+function hideTyping(){const t=document.getElementById('typing');if(t)t.remove()}
+async function sendMessage(){if(busy)return;const input=document.getElementById('msgInput');const text=input.value.trim();if(!text)return;input.value='';input.style.height='42px';document.getElementById('quickBtns').style.display='none';addMsg('user',text);history.push({role:'user',content:text});busy=true;document.getElementById('sendBtn').disabled=true;showTyping();try{const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:SYSTEM,messages:history})});const data=await res.json();const reply=data.content?.find(b=>b.type==='text')?.text||"I'm here with you. Can you tell me a little more about what you're feeling?";hideTyping();addMsg('buddy',reply);history.push({role:'assistant',content:reply})}catch(e){hideTyping();addMsg('buddy',"It seems there was a small hiccup — but I'm right here. Please try again.")}busy=false;document.getElementById('sendBtn').disabled=false;input.focus()}
+function quickSend(text){document.getElementById('msgInput').value=text;sendMessage()}
+document.getElementById('msgInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage()}});
+document.getElementById('msgInput').addEventListener('input',function(){this.style.height='42px';this.style.height=Math.min(this.scrollHeight,120)+'px'});
+function initApp(){history=[];document.getElementById('messages').innerHTML='';document.getElementById('quickBtns').style.display='flex';document.querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('active'));document.getElementById('moodLabel').textContent='Tap to log your mood';if(breathRunning)stopBreath();refreshAffirmation();refreshJournalPrompt();const name=currentUser==='Guest'?'there':currentUser.split('@')[0];addMsg('buddy',`Hi ${name} 🌸 I'm Buddy, your MarshalX wellness companion. I'm here to listen — no judgment, just presence. How are you feeling today?`)}
+</script>
+</body>
+</html>
